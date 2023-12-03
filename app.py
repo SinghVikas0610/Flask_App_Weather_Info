@@ -1,21 +1,24 @@
-from flask import Flask,render_template,request
-app=Flask(__name__)
+from flask import Flask , render_template, request
+import requests 
+
+app = Flask(__name__)
+
 @app.route('/')
-def calcu():
-    return render_template("second.html")
-@app.route('/calc',methods=['post'])
-def calculator():
-    num1=int(request.form["num1"])
-    num2=int(request.form["num2"])
-    ops=request.form.get("operation")
-    if ops=="Add":
-        res=num1+num2
-    elif ops=="Sub":
-        res=num1-num2
-    elif ops=="Mul":
-        res=num1*num2
-    else:
-        res=num1/num2
-    return f"Result is {res}"
-if __name__=="__main__":
-    app.run(debug=True)
+def homepage():
+    return render_template("index.html")
+
+@app.route("/weatherapp",methods = ['POST' , "GET"])
+def get_weatherdata():
+    url = "https://api.openweathermap.org/data/2.5/weather"
+
+    param = {
+        'q':request.form.get("city"),
+        'appid':request.form.get('appid'),
+        'units':request.form.get('units')
+        }
+    response = requests.get(url,params=param)
+    data = response.json()
+    return f"data : {data}"
+
+if __name__ == '__main__':
+    app.run(host= "0.0.0.0")
